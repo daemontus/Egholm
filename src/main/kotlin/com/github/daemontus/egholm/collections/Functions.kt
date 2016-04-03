@@ -10,7 +10,10 @@ fun <T> T.repeat(times: Int): Iterable<T> = object : Iterable<T> {
 
         override fun hasNext(): Boolean = index < times
 
-        override fun next(): T = this@repeat
+        override fun next(): T {
+            index += 1
+            return this@repeat
+        }
     }
 
 }

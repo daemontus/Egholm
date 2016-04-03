@@ -42,3 +42,8 @@ inline fun Logger.lFinest(action: () -> String) {
         this.finest(action())
     }
 }
+
+val silentLogger = Logger.getAnonymousLogger().apply { level = Level.OFF }
+val severLogger = Logger.getAnonymousLogger().apply { level = Level.SEVERE }
+val silentLoggers: (Int) -> Logger = { id -> silentLogger }
+val severeLoggers: (Int) -> Logger = { id -> severLogger }
