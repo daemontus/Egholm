@@ -2,9 +2,9 @@ package com.github.daemontus.egholm.functional
 
 import java.util.*
 
-sealed class Result<T, E> : Iterable<T> {
+sealed class Result<out T, E> : Iterable<T> {
 
-    class Ok<T, E>(val ok: T) : Result<T, E>() {
+    class Ok<out T, E>(val ok: T) : Result<T, E>() {
         override fun iterator(): Iterator<T> = object : Iterator<T> {
             private var next: Boolean = true
             override fun hasNext(): Boolean = next
@@ -19,7 +19,7 @@ sealed class Result<T, E> : Iterable<T> {
         override fun toString(): String = "Ok($ok)"
     }
 
-    class Error<T, E>(val error: E) : Result<T, E>() {
+    class Error<out T, E>(val error: E) : Result<T, E>() {
         override fun iterator(): Iterator<T> = object : Iterator<T> {
             override fun hasNext(): Boolean = false
             override fun next(): T = throw NoSuchElementException()
