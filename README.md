@@ -1,3 +1,3 @@
 ### egholm
 
-Some utility classes/functions written in Kotlin. Use at your own risk :)
+Rust-like Option and Result classes in Kotlin + some other utilities.
