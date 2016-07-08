@@ -2,16 +2,21 @@ package com.github.daemontus.egholm.functional
 
 import java.util.*
 
-sealed class Result<out T, E> : Iterable<T> {
+sealed class Result<out T, E> {
+
+    abstract fun asIterable(): Iterable<T>
 
     class Ok<out T, E>(val ok: T) : Result<T, E>() {
-        override fun iterator(): Iterator<T> = object : Iterator<T> {
-            private var next: Boolean = true
-            override fun hasNext(): Boolean = next
-            override fun next(): T = if (next) {
-                next = false
-                ok
-            } else throw NoSuchElementException()
+
+        override fun asIterable(): Iterable<T> = object : Iterable<T> {
+            override fun iterator(): Iterator<T> = object : Iterator<T> {
+                private var next: Boolean = true
+                override fun hasNext(): Boolean = next
+                override fun next(): T = if (next) {
+                    next = false
+                    ok
+                } else throw NoSuchElementException()
+            }
         }
 
         override fun equals(other: Any?): Boolean = other is Ok<*, *> && other.ok == this.ok
@@ -20,9 +25,12 @@ sealed class Result<out T, E> : Iterable<T> {
     }
 
     class Error<out T, E>(val error: E) : Result<T, E>() {
-        override fun iterator(): Iterator<T> = object : Iterator<T> {
-            override fun hasNext(): Boolean = false
-            override fun next(): T = throw NoSuchElementException()
+
+        override fun asIterable(): Iterable<T> = object : Iterable<T> {
+            override fun iterator(): Iterator<T> = object : Iterator<T> {
+                override fun hasNext(): Boolean = false
+                override fun next(): T = throw NoSuchElementException()
+            }
         }
 
         override fun equals(other: Any?): Boolean = other is Error<*,*> && other.error == this.error

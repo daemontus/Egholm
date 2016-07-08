@@ -5,12 +5,17 @@ import java.util.*
 /**
  * Optional value.
  */
-sealed class Option<out T> : Iterable<T> {
+sealed class Option<out T> {
+
+    abstract fun asIterable(): Iterable<T>
 
     class None<out T> : Option<T>() {
-        override fun iterator(): Iterator<T> = object : Iterator<T> {
-            override fun hasNext(): Boolean = false
-            override fun next(): T = throw NoSuchElementException()
+
+        override fun asIterable(): Iterable<T> = object : Iterable<T> {
+            override fun iterator(): Iterator<T> = object : Iterator<T> {
+                override fun hasNext(): Boolean = false
+                override fun next(): T = throw NoSuchElementException()
+            }
         }
 
         override fun equals(other: Any?): Boolean = other is None<*>
@@ -19,17 +24,19 @@ sealed class Option<out T> : Iterable<T> {
     }
 
     class Some<out T>(val value: T) : Option<T>() {
-        override fun iterator(): Iterator<T> = object : Iterator<T> {
-            private var next = true
-            override fun hasNext(): Boolean = next
 
-            override fun next(): T {
-                return if (next) {
-                    next = false
-                    value
-                } else throw NoSuchElementException()
+        override fun asIterable(): Iterable<T> = object : Iterable<T> {
+            override fun iterator(): Iterator<T> = object : Iterator<T> {
+                private var next = true
+                override fun hasNext(): Boolean = next
+
+                override fun next(): T {
+                    return if (next) {
+                        next = false
+                        value
+                    } else throw NoSuchElementException()
+                }
             }
-
         }
 
         override fun equals(other: Any?): Boolean = other is Some<*> && other.value == this.value
